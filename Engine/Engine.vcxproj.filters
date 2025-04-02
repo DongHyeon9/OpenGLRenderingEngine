@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Engine.h">
+      <Filter>01.Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Header.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMinimal.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="PreProcessor.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Value.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99.Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\texture.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\vboindexer.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\controls.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\objloader.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\quaternion_utils.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\tangentspace.hpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="01.Engine">
+      <UniqueIdentifier>{88132558-90de-4f16-80de-a7400cd9e9e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Misc">
+      <UniqueIdentifier>{fbfa578a-4cb9-41ac-b136-554a1c4ed798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Misc\Helper">
+      <UniqueIdentifier>{57b54c02-7be3-4959-88f4-d4d2f9953c7a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Engine.cpp">
+      <Filter>01.Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\texture.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\vboindexer.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\controls.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\objloader.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\quaternion_utils.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\tangentspace.cpp">
+      <Filter>99.Misc\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99.Misc</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
