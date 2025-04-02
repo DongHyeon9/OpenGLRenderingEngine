@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -182,6 +182,10 @@
     <ClCompile Include="..\Lib\OpenGL\helper\vboindexer.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Fragment\FS_Default.frag" />
+    <None Include="Shader\Vertex\VS_Default.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

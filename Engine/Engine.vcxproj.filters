@@ -25,23 +25,23 @@
     <ClInclude Include="EngineUtil.h">
       <Filter>99.Misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\Lib\OpenGL\helper\texture.hpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Lib\OpenGL\helper\vboindexer.hpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\controls.hpp">
-      <Filter>99.Misc\Helper</Filter>
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\objloader.hpp">
-      <Filter>99.Misc\Helper</Filter>
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\quaternion_utils.hpp">
-      <Filter>99.Misc\Helper</Filter>
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\tangentspace.hpp">
-      <Filter>99.Misc\Helper</Filter>
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\texture.hpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Lib\OpenGL\helper\vboindexer.hpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -51,34 +51,57 @@
     <Filter Include="99.Misc">
       <UniqueIdentifier>{fbfa578a-4cb9-41ac-b136-554a1c4ed798}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Misc\Helper">
-      <UniqueIdentifier>{57b54c02-7be3-4959-88f4-d4d2f9953c7a}</UniqueIdentifier>
+    <Filter Include="99.Misc\ThirdParty">
+      <UniqueIdentifier>{95e84bc8-c245-45c2-8830-dffea3d66ac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Misc\ThirdParty\Helper">
+      <UniqueIdentifier>{784b7d04-d685-4709-a305-1e6a2909b59b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Misc\ThirdParty\glm">
+      <UniqueIdentifier>{6ed94210-8af7-43e2-afe3-d62a40791e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Shader">
+      <UniqueIdentifier>{ab29bd03-d5d2-437b-8cc2-2bc027515822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Shader\Vertex">
+      <UniqueIdentifier>{35d38a6f-1b9a-426c-9e0e-84c5d3cab728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Shader\Fragment">
+      <UniqueIdentifier>{ec51e932-09a3-4fe3-a6d3-64c6e0c9e139}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
       <Filter>01.Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\texture.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\vboindexer.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\controls.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\objloader.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\quaternion_utils.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\tangentspace.cpp">
-      <Filter>99.Misc\Helper</Filter>
-    </ClCompile>
     <ClCompile Include="EngineUtil.cpp">
       <Filter>99.Misc</Filter>
     </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\controls.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\objloader.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\quaternion_utils.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\tangentspace.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\texture.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Lib\OpenGL\helper\vboindexer.cpp">
+      <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Vertex\VS_Default.vert">
+      <Filter>02.Shader\Vertex</Filter>
+    </None>
+    <None Include="Shader\Fragment\FS_Default.frag">
+      <Filter>02.Shader\Fragment</Filter>
+    </None>
   </ItemGroup>
 </Project>
