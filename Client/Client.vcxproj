@@ -127,7 +127,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\debug\lib\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\debug\lib\;$(SolutionDir)Bin\Engine\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\debug\lib\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\debug\bin\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\debug\bin\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\debug\lib\;$(SolutionDir)Lib\OpenGL\opengl_x64-windows\debug\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_$(Configuration).lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -154,7 +154,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\lib\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\lib\;$(SolutionDir)Bin\Engine\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\bin\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\lib\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\lib\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\bin\;$(SolutionDir)Lib\OpenGL\opengl_x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine_$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine_$(Configuration).lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

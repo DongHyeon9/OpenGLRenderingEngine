@@ -25,9 +25,6 @@
     <ClInclude Include="EngineUtil.h">
       <Filter>99.Misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\Lib\OpenGL\helper\controls.hpp">
-      <Filter>99.Misc\ThirdParty\Helper</Filter>
-    </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\objloader.hpp">
       <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClInclude>
@@ -42,6 +39,18 @@
     </ClInclude>
     <ClInclude Include="..\Lib\OpenGL\helper\vboindexer.hpp">
       <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerManager.h">
+      <Filter>03.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>03.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraManager.h">
+      <Filter>03.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>99.Misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +78,9 @@
     <Filter Include="02.Shader\Fragment">
       <UniqueIdentifier>{ec51e932-09a3-4fe3-a6d3-64c6e0c9e139}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.Manager">
+      <UniqueIdentifier>{e9e31ef8-8e08-401a-b796-7c13e8a0103e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -76,9 +88,6 @@
     </ClCompile>
     <ClCompile Include="EngineUtil.cpp">
       <Filter>99.Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Lib\OpenGL\helper\controls.cpp">
-      <Filter>99.Misc\ThirdParty\Helper</Filter>
     </ClCompile>
     <ClCompile Include="..\Lib\OpenGL\helper\objloader.cpp">
       <Filter>99.Misc\ThirdParty\Helper</Filter>
@@ -94,6 +103,15 @@
     </ClCompile>
     <ClCompile Include="..\Lib\OpenGL\helper\vboindexer.cpp">
       <Filter>99.Misc\ThirdParty\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>03.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerManager.cpp">
+      <Filter>03.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraManager.cpp">
+      <Filter>03.Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

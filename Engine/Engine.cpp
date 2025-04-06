@@ -1,5 +1,9 @@
 #include "Engine.h"
 
+#include "TimerManager.h"
+#include "InputManager.h"
+#include "CameraManager.h"
+
 std::unique_ptr<Engine> GEngine{ std::make_unique<Engine>() };
 
 bool Engine::Init(WindowDesc Desc)
@@ -9,6 +13,7 @@ bool Engine::Init(WindowDesc Desc)
 	CHECK(InitWindow(), "Window Init Fail", false);
 	CHECK(InitOpenGL(), "OpenGL Init Fail", false);
 	CHECK(InitProgram(), "Program Init Fail", false);
+	CHECK(InitManager(), "Manager Init Fail", false);
 
 	return true;
 }
@@ -16,95 +21,112 @@ bool Engine::Init(WindowDesc Desc)
 int Engine::Run()
 {
 	//유니폼 레지스터에 MVP라는 이름으로 행렬생성 및 ID 할당
-	GLuint matrixID = glGetUniformLocation(programID, "MVP");
+	matrixID = glGetUniformLocation(programID, "MVP");
 
 	CHECK(CreateBox(), "Box Create Fail", -1);
 	CHECK(CreateColor(), "Color Create Fail", -1);
+	CHECK(CreateTexture(), "Texture Create Fail", -1);
+	CHECK(CreateUV(), "UV Create Fail", -1);
 
-	//투영행렬 생성
-	glm::mat4 projection{ glm::perspective(
-		glm::radians(90.0f),									//fov
-		static_cast<float>(winDesc.width) / winDesc.height,		//aspect
-		0.1f,													//near Z
-		100.0f)													//far Z
-	};
-
-	//뷰 행렬 생성
-	glm::mat4 view{ glm::lookAt(
-		glm::vec3{4,3,3},		//카메라 위치
-		glm::vec3{0,0,0},		//카메라가 보는 곳
-		glm::vec3{0,0,1})		//카메라의 up벡터
-	};
-
-	//모델 행렬 생성
-	glm::mat4 model{ glm::mat4{1.0f} };		//identity 행렬
-
-	glm::mat4 mvp = projection * view * model;	//column major에 유의
-
-	do {
-		//프레임 버퍼의 색상, 깊이 정보 초기화
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//미리 컴파일되고 링크된 쉐이더 프로그램 활성화
-		glUseProgram(programID);
-
-		//유니폼 레지스터에 값 할당
-		glUniformMatrix4fv(
-			matrixID,		//할당할 유니폼 레지스터 ID
-			1,				//데이터 갯수
-			GL_FALSE,		//전치행렬 사용할 지 여부(column major로 작성해서 바꾸지 않음)
-			&mvp[0][0]		//데이터의 시작 주소
-		);
-
-		//인덱스 0번의 정점 속성 배열을 활성화
-		glEnableVertexAttribArray(0);
-		//정점 버퍼 객체를 다시 바인딩
-		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-		//정점 데이터의 속성 레이아웃을 지정
-		glVertexAttribPointer(
-			0,			//쉐이더에서 참조할 정점 속성의 위치
-			3,			//각 정점에 대해 3개의 요소(x, y, z)가 사용
-			GL_FLOAT,	//각 요소의 자료형이 float임
-			GL_FALSE,	//데이터를 정규화 여부(그대로 사용)
-			0,			//각 정점 사이의 간격(0이면 데이터가 연속됨)
-			(void*)0	//버퍼 내에서 데이터 시작 위치(0바이트 오프셋)
-		);
-
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-		glVertexAttribPointer(
-			1,
-			3,
-			GL_FLOAT,
-			GL_FALSE,
-			0,
-			(void*)0
-		);
-
-		//버텍스 배열에서 0번 인덱스부터 시작해 3개의 버텍스를 사용하여 삼각형을 그림
-		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-
-		//인덱스 0번의 정점 속성 배열을 비활성화, 이후 렌더링에 영향을 주지 않도록 설정
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-
-		//백 버퍼와 프론트 버퍼를 교체
-		glfwSwapBuffers(window);
-		//GLFW 이벤트(키 입력, 마우스 움직임 등)를 처리
-		glfwPollEvents();
-
+	while (!glfwWindowShouldClose(window))
+	{
+		EngineUpdate();
 	}
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&		//ESC 키가 눌리지 않은 경우
-		glfwWindowShouldClose(window) == 0);						//창이 닫히지 않은 경우
 
 	ShutDown();
 
 	return 0;
 }
 
-void Engine::WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
+void Engine::EngineUpdate()
 {
+	float deltaTime{ TimerManager::GetInstance()->Update() };
+	InputManager::GetInstance()->Update();
+	CameraManager::GetInstance()->Update(deltaTime);
 
+	Update(deltaTime);
+	LateUpdate();
+
+	RenderBegin();
+	Render();
+	RenderEnd();
+}
+
+void Engine::Update(float DeltaTime)
+{
+	//GLFW 이벤트(키 입력, 마우스 움직임 등)를 처리
+	glfwPollEvents();
+	
+	//모델 행렬 생성
+	glm::mat4 model{ glm::mat4{1.0f} };		//identity 행렬
+
+	mvp = CameraManager::GetInstance()->GetProjectionMatrix() * CameraManager::GetInstance()->GetViewMatrix() * model;	//column major에 유의
+
+	//유니폼 레지스터에 값 할당
+	glUniformMatrix4fv(
+		matrixID,		//할당할 유니폼 레지스터 ID
+		1,				//데이터 갯수
+		GL_FALSE,		//전치행렬 사용할 지 여부(column major로 작성해서 바꾸지 않음)
+		&mvp[0][0]		//데이터의 시작 주소
+	);
+}
+
+void Engine::LateUpdate()
+{
+}
+
+void Engine::RenderBegin()
+{
+	//프레임 버퍼의 색상, 깊이 정보 초기화
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Engine::Render()
+{
+	//미리 컴파일되고 링크된 쉐이더 프로그램 활성화
+	glUseProgram(programID);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(textureID, 0);
+
+	//인덱스 0번의 정점 속성 배열을 활성화
+	glEnableVertexAttribArray(0);
+	//정점 버퍼 객체를 다시 바인딩
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	//정점 데이터의 속성 레이아웃을 지정
+	glVertexAttribPointer(
+		0,			//쉐이더에서 참조할 정점 속성의 위치
+		3,			//각 정점에 대해 3개의 요소(x, y, z)가 사용
+		GL_FLOAT,	//각 요소의 자료형이 float임
+		GL_FALSE,	//데이터를 정규화 여부(그대로 사용)
+		0,			//각 정점 사이의 간격(0이면 데이터가 연속됨)
+		(void*)0	//버퍼 내에서 데이터 시작 위치(0바이트 오프셋)
+	);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glVertexAttribPointer(
+		1,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		0,
+		(void*)0
+	);
+
+	//버텍스 배열에서 0번 인덱스부터 시작해 3개의 버텍스를 사용하여 삼각형을 그림
+	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+
+	//인덱스 0번의 정점 속성 배열을 비활성화, 이후 렌더링에 영향을 주지 않도록 설정
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+}
+
+void Engine::RenderEnd()
+{
+	//백 버퍼와 프론트 버퍼를 교체
+	glfwSwapBuffers(window);
 }
 
 bool Engine::InitWindow()
@@ -126,7 +148,7 @@ bool Engine::InitWindow()
 	//키 입력이 발생하면 해당 키의 상태가 일정 기간 유지되도록 하여, 폴링 시 놓치는 입력이 없게함
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	//키 입력 시 호출될 콜백 함수 등록
-	glfwSetKeyCallback(window, OpenGLWndProc);
+	glfwSetKeyCallback(window, WndProc);
 
 	return true;
 }
@@ -183,13 +205,22 @@ bool Engine::InitProgram()
 	return EngineUtil::OpenGL::CheckProgram(programID);
 }
 
+bool Engine::InitManager()
+{
+	CHECK(InputManager::GetInstance()->Init(), "Input Manager Init Fail", false);
+	CHECK(TimerManager::GetInstance()->Init(), "Timer Manager Init Fail", false);
+	CHECK(CameraManager::GetInstance()->Init(), "Camera Manager Init Fail", false);
+
+	return true;
+}
+
 void Engine::ShutDown()
 {
 	//GPU 메모리에서 사용한 버퍼 객체를 해제
 	glDeleteBuffers(1,	//삭제할 버퍼의 개수
-		&vertexbuffer);	//삭제할 버퍼 객체의 주소
+		&vertexBuffer);	//삭제할 버퍼 객체의 주소
 	glDeleteBuffers(1,
-		&colorbuffer);
+		&colorBuffer);
 
 	//생성된 VAO를 삭제
 	glDeleteVertexArrays(1,		//삭제할 VAO의 개수
@@ -247,11 +278,11 @@ bool Engine::CreateBox()
 	//버텍스 버퍼 객체(VBO)를 생성, ID할당
 	glGenBuffers(
 		1,				//생성할 버퍼의 개수
-		&vertexbuffer);	//생성된 버퍼 ID를 저장
+		&vertexBuffer);	//생성된 버퍼 ID를 저장
 
 	//생성된 버퍼를 활성화, 이후 버퍼 관련 호출에서 이 버퍼를 대상으로 동작하도록 만듬
 	glBindBuffer(GL_ARRAY_BUFFER,		//버퍼 타입, 정점 데이터를 저장
-		vertexbuffer);					//버퍼 객체의 ID
+		vertexBuffer);					//버퍼 객체의 ID
 	//정점 데이터를 GPU 메모리로 복사
 	glBufferData(GL_ARRAY_BUFFER,							//전송될 버퍼 타입
 		sizeof(vertexBufferData),			//전송할 데이터의 크기(바이트 단위)
@@ -302,14 +333,69 @@ bool Engine::CreateColor()
 	0.982f,  0.099f,  0.879f
 	};
 
-	glGenBuffers(1, &colorbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+	glGenBuffers(1, &colorBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colorBufferData), colorBufferData, GL_STATIC_DRAW);
 
 	return true;
 }
 
-void OpenGLWndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
+bool Engine::CreateTexture()
 {
-	GEngine->WndProc(Window, Key, ScanCode, Action, Mods);
+	texture = EngineUtil::Shader::LoadTexture("UVTemplate.bmp");
+	textureID = glGetUniformLocation(programID, "textureSampler");
+	return true;
+}
+
+bool Engine::CreateUV()
+{
+	const GLfloat uvBufferData[]{
+		0.000059f, 1.0f - 0.000004f,
+		0.000103f, 1.0f - 0.336048f,
+		0.335973f, 1.0f - 0.335903f,
+		1.000023f, 1.0f - 0.000013f,
+		0.667979f, 1.0f - 0.335851f,
+		0.999958f, 1.0f - 0.336064f,
+		0.667979f, 1.0f - 0.335851f,
+		0.336024f, 1.0f - 0.671877f,
+		0.667969f, 1.0f - 0.671889f,
+		1.000023f, 1.0f - 0.000013f,
+		0.668104f, 1.0f - 0.000013f,
+		0.667979f, 1.0f - 0.335851f,
+		0.000059f, 1.0f - 0.000004f,
+		0.335973f, 1.0f - 0.335903f,
+		0.336098f, 1.0f - 0.000071f,
+		0.667979f, 1.0f - 0.335851f,
+		0.335973f, 1.0f - 0.335903f,
+		0.336024f, 1.0f - 0.671877f,
+		1.000004f, 1.0f - 0.671847f,
+		0.999958f, 1.0f - 0.336064f,
+		0.667979f, 1.0f - 0.335851f,
+		0.668104f, 1.0f - 0.000013f,
+		0.335973f, 1.0f - 0.335903f,
+		0.667979f, 1.0f - 0.335851f,
+		0.335973f, 1.0f - 0.335903f,
+		0.668104f, 1.0f - 0.000013f,
+		0.336098f, 1.0f - 0.000071f,
+		0.000103f, 1.0f - 0.336048f,
+		0.000004f, 1.0f - 0.671870f,
+		0.336024f, 1.0f - 0.671877f,
+		0.000103f, 1.0f - 0.336048f,
+		0.336024f, 1.0f - 0.671877f,
+		0.335973f, 1.0f - 0.335903f,
+		0.667969f, 1.0f - 0.671889f,
+		1.000004f, 1.0f - 0.671847f,
+		0.667979f, 1.0f - 0.335851f
+	};
+
+	glGenBuffers(1, &uvBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvBufferData), uvBufferData, GL_STATIC_DRAW);
+
+	return true;
+}
+
+void WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
+{
+	InputManager::GetInstance()->UpdateKeyState(Key, Action);
 }

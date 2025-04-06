@@ -8,6 +8,7 @@ namespace EngineUtil
 	{
 		GLuint LoadVertexShader(const std::string& ShaderName);
 		GLuint LoadFragmentShader(const std::string& ShaderName);
+		GLuint LoadTexture(const std::string& TextureName);
 	}
 
 	namespace OpenGL
@@ -49,4 +50,16 @@ namespace EngineUtil
 		std::string GetTextureDir();
 		std::string GetMeshDir();
 	}
+}
+
+namespace std
+{
+	template<>
+	struct hash<E_KEY_TYPE>
+	{
+		size_t operator()(E_KEY_TYPE Wrapper) const
+		{
+			return std::hash<int>{}(static_cast<uint16>(Wrapper));
+		}
+	};
 }

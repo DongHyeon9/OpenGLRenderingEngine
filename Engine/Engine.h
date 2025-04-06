@@ -16,15 +16,24 @@ private:
 	GLuint programID{};
 	GLuint vertexArrayID{};
 
-	GLuint vertexbuffer{};
-	GLuint colorbuffer{};
+	GLuint vertexBuffer{};
+	GLuint colorBuffer{};
+	GLuint uvBuffer{};
+	GLuint texture{};
+	GLuint textureID{};
 	GLsizei vertexCount{};
+
+	glm::mat4 mvp{};
+	GLuint matrixID{};
 
 public:
 	bool Init(WindowDesc Desc);
 	int Run();
+	void EngineUpdate();
 
-	void WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods);
+	int GetWindowWidth()const { return winDesc.width; }
+	int GetWindowHeight()const { return winDesc.width; }
+	glm::vec2 GetWindowSize()const { return glm::vec2{ static_cast<float>(winDesc.width) ,static_cast<float>(winDesc.height) }; }
 
 protected:
 
@@ -32,10 +41,19 @@ private:
 	bool InitWindow();
 	bool InitOpenGL();
 	bool InitProgram();
+	bool InitManager();
 	void ShutDown();
+
+	void Update(float DeltaTime);
+	void LateUpdate();
+	void RenderBegin();
+	void Render();
+	void RenderEnd();
 
 	bool CreateBox();
 	bool CreateColor();
+	bool CreateTexture();
+	bool CreateUV();
 };
 
-void OpenGLWndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods);
+void WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods);

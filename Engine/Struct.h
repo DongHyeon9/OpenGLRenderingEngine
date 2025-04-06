@@ -1,5 +1,6 @@
 #pragma once
 #include "Header.h"
+#include "Enum.h"
 
 union Color {
     struct {
