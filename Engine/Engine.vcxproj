@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\;$(SolutionDir)Lib\ThirdParty\stb_x64-windows\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\include\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\;$(SolutionDir)Lib\ThirdParty\stb_x64-windows\include\;$(SolutionDir)Lib\OpenGL\opengl_x64-windows\include\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw\include\;$(SolutionDir)Lib\OpenGL\glew\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\;$(SolutionDir)Lib\ThirdParty\stb_x64-windows\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Lib\ThirdParty\assimp_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\imgui_x64-windows\include\;$(SolutionDir)Lib\ThirdParty\;$(SolutionDir)Engine\;$(SolutionDir)Lib\OpenGL\glfw3_x64-windows\include\;$(SolutionDir)Lib\OpenGL\glew_x64-windows\include\;$(SolutionDir)Lib\OpenGL\helper\;$(SolutionDir)Lib\OpenGL\;$(SolutionDir)Lib\ThirdParty\stb_x64-windows\include\;$(SolutionDir)Lib\OpenGL\opengl_x64-windows\include\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>

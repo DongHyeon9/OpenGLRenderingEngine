@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/glfw3-x64-windows-3.4-40d09cd7-000d-4271-bc6b-6249bc605126",
-  "name": "glfw3:x64-windows@3.4 a3d8b12b08e933efd34ec6248f095c5ed1ae463b76d95f2685494ce3c2783b34",
+  "documentNamespace": "https://spdx.org/spdxdocs/glfw3-x64-windows-3.4#1-6f090848-fc00-40a8-8876-844acdd1be64",
+  "name": "glfw3:x64-windows@3.4#1 12a29d315e4095320858141a0b829490407d9e12ed43744155707225d9d7e585",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-8a83681f921b10d86ae626fd833c253f4f8c355b"
+      "Tool: vcpkg-2024-08-01-fd884a0d390d12783076341bd43d77c3a6a15658"
     ],
-    "created": "2025-03-26T15:17:24Z"
+    "created": "2025-04-07T02:37:46Z"
   },
   "relationships": [
     {
@@ -28,6 +28,11 @@
       "relatedSpdxElement": "SPDXRef-file-1"
     },
     {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-2"
+    },
+    {
       "spdxElementId": "SPDXRef-binary",
       "relationshipType": "GENERATED_FROM",
       "relatedSpdxElement": "SPDXRef-port"
@@ -41,13 +46,18 @@
       "spdxElementId": "SPDXRef-file-1",
       "relationshipType": "CONTAINED_BY",
       "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-2",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
     }
   ],
   "packages": [
     {
       "name": "glfw3",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "3.4",
+      "versionInfo": "3.4#1",
       "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/glfw3",
       "homepage": "https://github.com/glfw/glfw",
       "licenseConcluded": "Zlib",
@@ -59,7 +69,7 @@
     {
       "name": "glfw3:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "a3d8b12b08e933efd34ec6248f095c5ed1ae463b76d95f2685494ce3c2783b34",
+      "versionInfo": "12a29d315e4095320858141a0b829490407d9e12ed43744155707225d9d7e585",
       "downloadLocation": "NONE",
       "licenseConcluded": "Zlib",
       "licenseDeclared": "NOASSERTION",
@@ -83,24 +93,36 @@
   ],
   "files": [
     {
-      "fileName": "./C:/Users/hdh97/vcpkg/ports/glfw3/portfile.cmake",
+      "fileName": "./C:/Users/dhhan/vcpkg/ports/glfw3/glfw3Config.cmake",
       "SPDXID": "SPDXRef-file-0",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "9633266b72cea105928a7fbce03616717f494276a0443c7db5ab2119c25a101a"
+          "checksumValue": "229b319f1c77185a689fb6c86f5c30c1ea0194ef09fc8a38fd979d8bfd7e532d"
         }
       ],
       "licenseConcluded": "NOASSERTION",
       "copyrightText": "NOASSERTION"
     },
     {
-      "fileName": "./C:/Users/hdh97/vcpkg/ports/glfw3/vcpkg.json",
+      "fileName": "./C:/Users/dhhan/vcpkg/ports/glfw3/portfile.cmake",
       "SPDXID": "SPDXRef-file-1",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "3231b3aa8aca6d3364938c8f0d9b7316e7fbfeb76b7f34487340f9ce12ba4d7d"
+          "checksumValue": "60c4da23985745d94b41f3dadeffe15db7267456405fe5fd8bf09c2de8350ea5"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": "./C:/Users/dhhan/vcpkg/ports/glfw3/vcpkg.json",
+      "SPDXID": "SPDXRef-file-2",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "fda2ad3ec78067934e7dd6969d6efc6a89fd088d9b3e54549aecb85d18724c77"
         }
       ],
       "licenseConcluded": "NOASSERTION",

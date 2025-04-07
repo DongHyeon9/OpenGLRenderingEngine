@@ -24,7 +24,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <texture.hpp>
 
+#ifdef _DEBUG
+#pragma comment(lib, "OpenGL32.Lib")
+#pragma comment(lib, "glew32d.lib")
+#pragma comment(lib, "glfw3dll.lib")
+#pragma comment(lib, "GlU32.Lib")
+#else
 #pragma comment(lib, "OpenGL32.Lib")
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "glfw3dll.lib")
 #pragma comment(lib, "GlU32.Lib")
+#endif
