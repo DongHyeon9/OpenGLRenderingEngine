@@ -2,15 +2,15 @@
 
 bool TimerManager::Init()
 {
-    lastTime = glfwGetTime();
+    lastTime = std::chrono::system_clock::now();
 
     return true;
 }
 
 float TimerManager::Update()
 {
-    currentTime = glfwGetTime();
-    deltaTime = static_cast<float>(currentTime - lastTime);
+    currentTime = std::chrono::system_clock::now();
+    deltaTime = currentTime - lastTime;
     lastTime = currentTime;
-    return deltaTime;
+    return deltaTime.count();
 }

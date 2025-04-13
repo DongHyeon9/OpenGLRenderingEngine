@@ -134,6 +134,16 @@ bool Engine::InitWindow()
 	//GLFW 초기화
 	CHECK(glfwInit(), "glfw Init Fail", false);
 
+	//멀티샘플링(안티앨리어싱) 샘플 수를 4로 지정
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	//OpenGL 컨텍스트의 버전을 3.3으로 설정
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//최신 OpenGL 기능 사용을 위해 forward compatibility 모드를 활성화
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	//OpenGL 코어 프로파일을 사용하여 불필요한 레거시 기능들을 비활성화
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	//윈도우를 생성
 	window = glfwCreateWindow(
 		winDesc.width,	//가로
@@ -155,16 +165,6 @@ bool Engine::InitWindow()
 
 bool Engine::InitOpenGL()
 {
-	//멀티샘플링(안티앨리어싱) 샘플 수를 4로 지정
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	//OpenGL 컨텍스트의 버전을 3.3으로 설정
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//최신 OpenGL 기능 사용을 위해 forward compatibility 모드를 활성화
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	//OpenGL 코어 프로파일을 사용하여 불필요한 레거시 기능들을 비활성화
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 	//최신 OpenGL 기능을 사용할 수 있도록 실험적 기능을 활성화
 	glewExperimental = true;
 
@@ -176,6 +176,7 @@ bool Engine::InitOpenGL()
 
 	//깊이 테스트 활성화
 	glEnable(GL_DEPTH_TEST);
+
 	//현재 픽셀이 이전 픽셀보다 깊이가 낮을 경우(가까울 경우)로 깊이테스트 진행
 	glDepthFunc(GL_LESS);
 

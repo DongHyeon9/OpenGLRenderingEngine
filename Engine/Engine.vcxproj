@@ -192,6 +192,11 @@
     <None Include="Shader\Fragment\FS_Default.frag" />
     <None Include="Shader\Vertex\VS_Default.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\etc\OpenGL\OpenGL.txt" />
+    <Text Include="..\etc\Project\Issue.txt" />
+    <Text Include="..\etc\Project\TODO.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

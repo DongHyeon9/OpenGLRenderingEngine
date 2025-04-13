@@ -66,9 +66,6 @@
     <Filter Include="99.Misc\ThirdParty\Helper">
       <UniqueIdentifier>{784b7d04-d685-4709-a305-1e6a2909b59b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Misc\ThirdParty\glm">
-      <UniqueIdentifier>{6ed94210-8af7-43e2-afe3-d62a40791e2d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.Shader">
       <UniqueIdentifier>{ab29bd03-d5d2-437b-8cc2-2bc027515822}</UniqueIdentifier>
     </Filter>
@@ -80,6 +77,9 @@
     </Filter>
     <Filter Include="03.Manager">
       <UniqueIdentifier>{e9e31ef8-8e08-401a-b796-7c13e8a0103e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="etc">
+      <UniqueIdentifier>{301d49c2-7758-4e65-aebf-1ef06ec24dae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -121,5 +121,16 @@
     <None Include="Shader\Fragment\FS_Default.frag">
       <Filter>02.Shader\Fragment</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\etc\OpenGL\OpenGL.txt">
+      <Filter>etc</Filter>
+    </Text>
+    <Text Include="..\etc\Project\TODO.txt">
+      <Filter>etc</Filter>
+    </Text>
+    <Text Include="..\etc\Project\Issue.txt">
+      <Filter>etc</Filter>
+    </Text>
   </ItemGroup>
 </Project>
