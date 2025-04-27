@@ -168,6 +168,7 @@
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineUtil.h" />
     <ClInclude Include="Enum.h" />
+    <ClInclude Include="GeometryManager.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="PreProcessor.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="EngineUtil.cpp" />
+    <ClCompile Include="GeometryManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="TimerManager.cpp" />
   </ItemGroup>

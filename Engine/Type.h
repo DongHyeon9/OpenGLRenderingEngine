@@ -12,6 +12,3 @@ using uint64 = unsigned __int64;
 using Vector2 = glm::vec2;
 using Vector3 = glm::vec3;
 using Vector4 = glm::vec4;
-using Matrix22 = glm::mat2x2;
-using Matrix33 = glm::mat3x3;
-using Matrix44 = glm::mat4x4;

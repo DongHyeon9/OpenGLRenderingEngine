@@ -14,14 +14,19 @@ private:
 	WindowDesc winDesc{};
 
 	GLuint programID{};
+	
 	GLuint vertexArrayID{};
-
 	GLuint vertexBuffer{};
-	GLuint colorBuffer{};
-	GLuint uvBuffer{};
+	GLuint indexBuffer{};
+	MeshData mesh{};
+
+	//GLuint vertexBuffer{};
+	//GLuint colorBuffer{};
+	//GLuint uvBuffer{};
+	//GLsizei vertexCount{};
+
 	GLuint texture{};
 	GLuint textureID{};
-	GLsizei vertexCount{};
 
 	glm::mat4 mvp{};
 	GLuint matrixID{};
@@ -51,9 +56,8 @@ private:
 	void RenderEnd();
 
 	bool CreateBox();
-	bool CreateColor();
 	bool CreateTexture();
-	bool CreateUV();
 };
 
 void WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods);
+void APIENTRY DebugCallback(GLenum Source, GLenum Type, GLuint ID, GLenum Severity, GLsizei Length, const GLchar* Message, const void* UserParam);

@@ -52,6 +52,9 @@
     <ClInclude Include="Type.h">
       <Filter>99.Misc</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryManager.h">
+      <Filter>03.Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="01.Engine">
@@ -111,6 +114,9 @@
       <Filter>03.Manager</Filter>
     </ClCompile>
     <ClCompile Include="CameraManager.cpp">
+      <Filter>03.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryManager.cpp">
       <Filter>03.Manager</Filter>
     </ClCompile>
   </ItemGroup>

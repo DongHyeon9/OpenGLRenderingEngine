@@ -3,6 +3,7 @@
 #include "TimerManager.h"
 #include "InputManager.h"
 #include "CameraManager.h"
+#include "GeometryManager.h"
 
 std::unique_ptr<Engine> GEngine{ std::make_unique<Engine>() };
 
@@ -23,10 +24,8 @@ int Engine::Run()
 	//유니폼 레지스터에 MVP라는 이름으로 행렬생성 및 ID 할당
 	matrixID = glGetUniformLocation(programID, "MVP");
 
-	CHECK(CreateBox(), "Box Create Fail", -1);
-	CHECK(CreateColor(), "Color Create Fail", -1);
+	CHECK(CreateBox(), "Texture Box Fail", -1);
 	CHECK(CreateTexture(), "Texture Create Fail", -1);
-	CHECK(CreateUV(), "UV Create Fail", -1);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -56,19 +55,12 @@ void Engine::Update(float DeltaTime)
 {
 	//GLFW 이벤트(키 입력, 마우스 움직임 등)를 처리
 	glfwPollEvents();
-	
+
 	//모델 행렬 생성
 	glm::mat4 model{ glm::mat4{1.0f} };		//identity 행렬
 
 	mvp = CameraManager::GetInstance()->GetProjectionMatrix() * CameraManager::GetInstance()->GetViewMatrix() * model;	//column major에 유의
 
-	//유니폼 레지스터에 값 할당
-	glUniformMatrix4fv(
-		matrixID,		//할당할 유니폼 레지스터 ID
-		1,				//데이터 갯수
-		GL_FALSE,		//전치행렬 사용할 지 여부(column major로 작성해서 바꾸지 않음)
-		&mvp[0][0]		//데이터의 시작 주소
-	);
 }
 
 void Engine::LateUpdate()
@@ -77,6 +69,22 @@ void Engine::LateUpdate()
 
 void Engine::RenderBegin()
 {
+	//기본 배경색 설정
+	glClearColor(winDesc.clearColor.r, winDesc.clearColor.g, winDesc.clearColor.b, winDesc.clearColor.a);
+
+	//깊이 테스트 활성화
+	glEnable(GL_DEPTH_TEST);
+	//현재 픽셀이 이전 픽셀보다 깊이가 낮을 경우(가까울 경우)로 깊이테스트 진행
+	glDepthFunc(GL_LESS);
+	glDepthRange(0.0F, 1.0F);
+	glClearDepthf(1.0F);
+
+	//glEnable(GL_CULL_FACE);
+	//glFrontFace(GL_CCW);
+	//glCullFace(GL_BACK);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	//프레임 버퍼의 색상, 깊이 정보 초기화
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
@@ -86,46 +94,42 @@ void Engine::Render()
 	//미리 컴파일되고 링크된 쉐이더 프로그램 활성화
 	glUseProgram(programID);
 
+	//유니폼 레지스터에 값 할당
+	glUniformMatrix4fv(
+		matrixID,		//할당할 유니폼 레지스터 ID
+		1,				//데이터 갯수
+		GL_FALSE,		//전치행렬 사용할 지 여부(column major로 작성해서 바꾸지 않음)
+		&mvp[0][0]		//데이터의 시작 주소
+	);
+
+	glBindVertexArray(vertexArrayID);
+
+	// 3) 어트리뷰트 설정 (guard 사용)
+	auto bindAttrib = [&](const char* name, GLuint size, size_t offset) {
+		GLint loc = glGetAttribLocation(programID, name);
+		if (loc >= 0) {
+			glEnableVertexAttribArray(loc);
+			glVertexAttribPointer(loc, size, GL_FLOAT,
+				GL_FALSE, sizeof(Vertex),
+				(void*)offset);
+		}
+		};
+	bindAttrib("position", Vertex::GetPositionSize() / sizeof(float), offsetof(Vertex, position));
+	bindAttrib("texcoord", Vertex::GetTexcoordSize() / sizeof(float), offsetof(Vertex, texcoord));
+	bindAttrib("normal", Vertex::GetNormalSize() / sizeof(float), offsetof(Vertex, normal));
+	bindAttrib("tangent", Vertex::GetTangentSize() / sizeof(float), offsetof(Vertex, tangent));
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(textureID, 0);
 
-	//인덱스 0번의 정점 속성 배열을 활성화
-	glEnableVertexAttribArray(0);
-	//정점 버퍼 객체를 다시 바인딩
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	//정점 데이터의 속성 레이아웃을 지정
-	glVertexAttribPointer(
-		0,			//쉐이더에서 참조할 정점 속성의 위치
-		3,			//각 정점에 대해 3개의 요소(x, y, z)가 사용
-		GL_FLOAT,	//각 요소의 자료형이 float임
-		GL_FALSE,	//데이터를 정규화 여부(그대로 사용)
-		0,			//각 정점 사이의 간격(0이면 데이터가 연속됨)
-		(void*)0	//버퍼 내에서 데이터 시작 위치(0바이트 오프셋)
-	);
-
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glVertexAttribPointer(
-		1,
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		0,
-		(void*)0
-	);
-
-	//버텍스 배열에서 0번 인덱스부터 시작해 3개의 버텍스를 사용하여 삼각형을 그림
-	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-
-	//인덱스 0번의 정점 속성 배열을 비활성화, 이후 렌더링에 영향을 주지 않도록 설정
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.indices.size()), GL_UNSIGNED_INT, (GLvoid*)(0));
 }
 
 void Engine::RenderEnd()
 {
 	//백 버퍼와 프론트 버퍼를 교체
+	glFinish();
 	glfwSwapBuffers(window);
 }
 
@@ -171,14 +175,9 @@ bool Engine::InitOpenGL()
 	//GLEW를 초기화, OpenGL 확장 기능들을 사용
 	CHECK(glewInit() == GLEW_OK, "Failed to initialize GLEW", false);
 
-	//기본 배경색 설정
-	glClearColor(winDesc.clearColor.r, winDesc.clearColor.g, winDesc.clearColor.b, winDesc.clearColor.a);
-
-	//깊이 테스트 활성화
-	glEnable(GL_DEPTH_TEST);
-
-	//현재 픽셀이 이전 픽셀보다 깊이가 낮을 경우(가까울 경우)로 깊이테스트 진행
-	glDepthFunc(GL_LESS);
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(DebugCallback, nullptr);
 
 	return true;
 }
@@ -187,12 +186,6 @@ bool Engine::InitProgram()
 {
 	//OpenGL에서 사용할 새로운 프로그램 객체를 생성
 	programID = glCreateProgram();
-
-	//버텍스 속성 데이터를 저장, 관리할 VAO를 생성
-	glGenVertexArrays(1,	//생성할 VAO(Vertex Array Object)의 개수
-		&vertexArrayID);	//생성된 VAO의 ID
-	//새로 생성한 VAO를 현재 활성화, 이후 정점 버퍼나 속성 설정은 이 VAO에 적용
-	glBindVertexArray(vertexArrayID);
 
 	GLuint vertexShaderID{ EngineUtil::Shader::LoadVertexShader("VS_Default") };
 	GLuint fragmentShaderID{ EngineUtil::Shader::LoadFragmentShader("FS_Default") };
@@ -211,6 +204,7 @@ bool Engine::InitManager()
 	CHECK(InputManager::GetInstance()->Init(), "Input Manager Init Fail", false);
 	CHECK(TimerManager::GetInstance()->Init(), "Timer Manager Init Fail", false);
 	CHECK(CameraManager::GetInstance()->Init(), "Camera Manager Init Fail", false);
+	CHECK(GeometryManager::GetInstance()->Init(), "Geometry Manager Init Fail", false);
 
 	return true;
 }
@@ -221,12 +215,11 @@ void Engine::ShutDown()
 	glDeleteBuffers(1,	//삭제할 버퍼의 개수
 		&vertexBuffer);	//삭제할 버퍼 객체의 주소
 	glDeleteBuffers(1,
-		&colorBuffer);
+		&indexBuffer);
 
-	//생성된 VAO를 삭제
-	glDeleteVertexArrays(1,		//삭제할 VAO의 개수
-		&vertexArrayID);		//삭제할 VAO의 ID
-	//생성된 쉐이더 프로그램 객체를 삭제
+	glDeleteVertexArrays(1,
+		&vertexArrayID);
+
 	glDeleteProgram(programID);
 
 	//GLFW 라이브러리의 종료 작업을 수행하여, 창, 이벤트 및 기타 관련 리소스를 모두 정리
@@ -235,108 +228,30 @@ void Engine::ShutDown()
 
 bool Engine::CreateBox()
 {
-	const GLfloat vertexBufferData[]{
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f,-1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f,-1.0f,
-		 1.0f,-1.0f,-1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f,
-		 1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f,-1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		 1.0f,-1.0f, 1.0f
-	};
+	mesh = GeometryManager::GetInstance()->CreateBox(Vector3(500.0f));
 
-	vertexCount = sizeof(vertexBufferData) / sizeof(GLfloat);
-	
-	//버텍스 버퍼 객체(VBO)를 생성, ID할당
-	glGenBuffers(
-		1,				//생성할 버퍼의 개수
-		&vertexBuffer);	//생성된 버퍼 ID를 저장
+	glGenVertexArrays(1, &vertexArrayID);
+	glBindVertexArray(vertexArrayID);
 
-	//생성된 버퍼를 활성화, 이후 버퍼 관련 호출에서 이 버퍼를 대상으로 동작하도록 만듬
-	glBindBuffer(GL_ARRAY_BUFFER,		//버퍼 타입, 정점 데이터를 저장
-		vertexBuffer);					//버퍼 객체의 ID
-	//정점 데이터를 GPU 메모리로 복사
-	glBufferData(GL_ARRAY_BUFFER,							//전송될 버퍼 타입
-		sizeof(vertexBufferData),			//전송할 데이터의 크기(바이트 단위)
-		vertexBufferData,							//전송할 실제 데이터
-		GL_STATIC_DRAW);									//데이터 사용 패턴(데이터가 변경되지 않고 GPU에 저장되어 렌더링 시 반복 사용됨)
-	
-	return true;
-}
+	// VBO 생성 및 데이터 업로드
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		mesh.vertices.size() * sizeof(Vertex),
+		mesh.vertices.data(),
+		GL_STATIC_DRAW);
 
-bool Engine::CreateColor()
-{
-	const GLfloat colorBufferData[]{
-	0.583f,  0.771f,  0.014f,
-	0.609f,  0.115f,  0.436f,
-	0.327f,  0.483f,  0.844f,
-	0.822f,  0.569f,  0.201f,
-	0.435f,  0.602f,  0.223f,
-	0.310f,  0.747f,  0.185f,
-	0.597f,  0.770f,  0.761f,
-	0.559f,  0.436f,  0.730f,
-	0.359f,  0.583f,  0.152f,
-	0.483f,  0.596f,  0.789f,
-	0.559f,  0.861f,  0.639f,
-	0.195f,  0.548f,  0.859f,
-	0.014f,  0.184f,  0.576f,
-	0.771f,  0.328f,  0.970f,
-	0.406f,  0.615f,  0.116f,
-	0.676f,  0.977f,  0.133f,
-	0.971f,  0.572f,  0.833f,
-	0.140f,  0.616f,  0.489f,
-	0.997f,  0.513f,  0.064f,
-	0.945f,  0.719f,  0.592f,
-	0.543f,  0.021f,  0.978f,
-	0.279f,  0.317f,  0.505f,
-	0.167f,  0.620f,  0.077f,
-	0.347f,  0.857f,  0.137f,
-	0.055f,  0.953f,  0.042f,
-	0.714f,  0.505f,  0.345f,
-	0.783f,  0.290f,  0.734f,
-	0.722f,  0.645f,  0.174f,
-	0.302f,  0.455f,  0.848f,
-	0.225f,  0.587f,  0.040f,
-	0.517f,  0.713f,  0.338f,
-	0.053f,  0.959f,  0.120f,
-	0.393f,  0.621f,  0.362f,
-	0.673f,  0.211f,  0.457f,
-	0.820f,  0.883f,  0.371f,
-	0.982f,  0.099f,  0.879f
-	};
+	// IBO 생성 및 데이터 업로드
+	glGenBuffers(1, &indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		mesh.indices.size() * sizeof(uint32),
+		mesh.indices.data(),
+		GL_STATIC_DRAW);
 
-	glGenBuffers(1, &colorBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colorBufferData), colorBufferData, GL_STATIC_DRAW);
+	glBindVertexArray(0);
 
 	return true;
 }
@@ -348,55 +263,53 @@ bool Engine::CreateTexture()
 	return true;
 }
 
-bool Engine::CreateUV()
-{
-	const GLfloat uvBufferData[]{
-		0.000059f, 1.0f - 0.000004f,
-		0.000103f, 1.0f - 0.336048f,
-		0.335973f, 1.0f - 0.335903f,
-		1.000023f, 1.0f - 0.000013f,
-		0.667979f, 1.0f - 0.335851f,
-		0.999958f, 1.0f - 0.336064f,
-		0.667979f, 1.0f - 0.335851f,
-		0.336024f, 1.0f - 0.671877f,
-		0.667969f, 1.0f - 0.671889f,
-		1.000023f, 1.0f - 0.000013f,
-		0.668104f, 1.0f - 0.000013f,
-		0.667979f, 1.0f - 0.335851f,
-		0.000059f, 1.0f - 0.000004f,
-		0.335973f, 1.0f - 0.335903f,
-		0.336098f, 1.0f - 0.000071f,
-		0.667979f, 1.0f - 0.335851f,
-		0.335973f, 1.0f - 0.335903f,
-		0.336024f, 1.0f - 0.671877f,
-		1.000004f, 1.0f - 0.671847f,
-		0.999958f, 1.0f - 0.336064f,
-		0.667979f, 1.0f - 0.335851f,
-		0.668104f, 1.0f - 0.000013f,
-		0.335973f, 1.0f - 0.335903f,
-		0.667979f, 1.0f - 0.335851f,
-		0.335973f, 1.0f - 0.335903f,
-		0.668104f, 1.0f - 0.000013f,
-		0.336098f, 1.0f - 0.000071f,
-		0.000103f, 1.0f - 0.336048f,
-		0.000004f, 1.0f - 0.671870f,
-		0.336024f, 1.0f - 0.671877f,
-		0.000103f, 1.0f - 0.336048f,
-		0.336024f, 1.0f - 0.671877f,
-		0.335973f, 1.0f - 0.335903f,
-		0.667969f, 1.0f - 0.671889f,
-		1.000004f, 1.0f - 0.671847f,
-		0.667979f, 1.0f - 0.335851f
-	};
-
-	glGenBuffers(1, &uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uvBufferData), uvBufferData, GL_STATIC_DRAW);
-
-	return true;
-}
-
 void WndProc(GLFWwindow* Window, int Key, int ScanCode, int Action, int Mods)
 {
 	InputManager::GetInstance()->UpdateKeyState(Key, Action);
+}
+
+void DebugCallback(GLenum Source, GLenum Type, GLuint ID, GLenum Severity, GLsizei Length, const GLchar* Message, const void* UserParam)
+{
+	static auto LogError = [](const char* Msg) {fprintf(stderr, "[ERROR] %s\n", Msg); };
+	static auto LogWarning = [](const char* Msg) { fprintf(stderr, "[WARN ] %s\n", Msg); };
+	static auto LogInfo = [](const char* Msg) { fprintf(stdout, "[INFO ] %s\n", Msg); };
+
+	// 중요하지 않은 ID 필터링 (옵션)
+	if (ID == 131169 || ID == 131185 || ID == 131218 || ID == 131204)
+		return; // non-significant
+
+	// 메시지 레이블 생성
+	const char* type = nullptr;
+	switch (Type) {
+	case GL_DEBUG_TYPE_ERROR:               type = "ERROR";        break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: type = "DEPRECATED";  break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  type = "UNDEFINED";   break;
+	case GL_DEBUG_TYPE_PORTABILITY:         type = "PORTABILITY"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE:         type = "PERFORMANCE"; break;
+	case GL_DEBUG_TYPE_OTHER:               type = "OTHER";       break;
+	default:                               type = "UNKNOWN";     break;
+	}
+
+	const char* severity = nullptr;
+	switch (Severity) {
+	case GL_DEBUG_SEVERITY_HIGH:         severity = "HIGH";         break;
+	case GL_DEBUG_SEVERITY_MEDIUM:       severity = "MEDIUM";       break;
+	case GL_DEBUG_SEVERITY_LOW:          severity = "LOW";          break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: severity = "NOTIFICATION"; break;
+	default:                            severity = "UNKNOWN";      break;
+	}
+
+	// 실제 분기: Type 또는 Severity 기준
+	if (Type == GL_DEBUG_TYPE_ERROR || Severity == GL_DEBUG_SEVERITY_HIGH) {
+		// 치명적 에러
+		LogError(Message);
+	}
+	else if (Severity == GL_DEBUG_SEVERITY_MEDIUM) {
+		// 경고
+		LogWarning(Message);
+	}
+	else {
+		// 정보성(LOW / NOTIFICATION)
+		LogInfo(Message);
+	}
 }
