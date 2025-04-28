@@ -9,7 +9,7 @@ namespace SHADER_EXTENSION
 
 namespace GLOBAL
 {
-	constexpr float UNIT{ 0.001f };
+	constexpr float UNIT{ 0.0001f };
 
 	constexpr Vector4 FORWARD{ 0.f,0.f,-1.f, 0.0f };
 	constexpr Vector4 BACKWARD{ 0.f,0.f,1.f, 0.0f };

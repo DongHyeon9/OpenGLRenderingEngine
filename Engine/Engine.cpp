@@ -83,7 +83,7 @@ void Engine::RenderBegin()
 	//glFrontFace(GL_CCW);
 	//glCullFace(GL_BACK);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	//프레임 버퍼의 색상, 깊이 정보 초기화
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -94,6 +94,8 @@ void Engine::Render()
 	//미리 컴파일되고 링크된 쉐이더 프로그램 활성화
 	glUseProgram(programID);
 
+	glBindVertexArray(vertexArrayID);
+
 	//유니폼 레지스터에 값 할당
 	glUniformMatrix4fv(
 		matrixID,		//할당할 유니폼 레지스터 ID
@@ -102,28 +104,13 @@ void Engine::Render()
 		&mvp[0][0]		//데이터의 시작 주소
 	);
 
-	glBindVertexArray(vertexArrayID);
-
-	// 3) 어트리뷰트 설정 (guard 사용)
-	auto bindAttrib = [&](const char* name, GLuint size, size_t offset) {
-		GLint loc = glGetAttribLocation(programID, name);
-		if (loc >= 0) {
-			glEnableVertexAttribArray(loc);
-			glVertexAttribPointer(loc, size, GL_FLOAT,
-				GL_FALSE, sizeof(Vertex),
-				(void*)offset);
-		}
-		};
-	bindAttrib("position", Vertex::GetPositionSize() / sizeof(float), offsetof(Vertex, position));
-	bindAttrib("texcoord", Vertex::GetTexcoordSize() / sizeof(float), offsetof(Vertex, texcoord));
-	bindAttrib("normal", Vertex::GetNormalSize() / sizeof(float), offsetof(Vertex, normal));
-	bindAttrib("tangent", Vertex::GetTangentSize() / sizeof(float), offsetof(Vertex, tangent));
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(textureID, 0);
 
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh.indices.size()), GL_UNSIGNED_INT, (GLvoid*)(0));
+
+	glBindVertexArray(0);
 }
 
 void Engine::RenderEnd()
@@ -217,8 +204,7 @@ void Engine::ShutDown()
 	glDeleteBuffers(1,
 		&indexBuffer);
 
-	glDeleteVertexArrays(1,
-		&vertexArrayID);
+	glDeleteVertexArrays(1, &vertexArrayID);
 
 	glDeleteProgram(programID);
 
@@ -228,7 +214,12 @@ void Engine::ShutDown()
 
 bool Engine::CreateBox()
 {
-	mesh = GeometryManager::GetInstance()->CreateBox(Vector3(500.0f));
+	//mesh = GeometryManager::GetInstance()->CreateBox(Vector3(1000.0f));
+	//TODO : 상단반구와 하단반구 움직이지 않음
+	//mesh = GeometryManager::GetInstance()->CreateCapsule(1000.0f, 3000.0f, 20, 20);
+	//TODO : 위 아래 뚜껑 없음
+	mesh = GeometryManager::GetInstance()->CreateCylinder(1000.0f, 1500.0f, 3000.0f, 8);
+	//mesh = GeometryManager::GetInstance()->CreateSphere(1000.0f, 20, 20);
 
 	glGenVertexArrays(1, &vertexArrayID);
 	glBindVertexArray(vertexArrayID);
@@ -241,6 +232,19 @@ bool Engine::CreateBox()
 		mesh.vertices.size() * sizeof(Vertex),
 		mesh.vertices.data(),
 		GL_STATIC_DRAW);
+
+	// 3) 어트리뷰트 설정 (guard 사용)
+	auto bindAttrib = [&](const char* name, GLuint size, size_t offset) {
+		GLint loc = glGetAttribLocation(programID, name);
+		glEnableVertexAttribArray(loc);
+		glVertexAttribPointer(loc, size, GL_FLOAT,
+			GL_FALSE, sizeof(Vertex),
+			(void*)offset);
+		};
+	bindAttrib("position", Vertex::GetPositionSize() / sizeof(float), offsetof(Vertex, position));
+	bindAttrib("texcoord", Vertex::GetTexcoordSize() / sizeof(float), offsetof(Vertex, texcoord));
+	bindAttrib("normal", Vertex::GetNormalSize() / sizeof(float), offsetof(Vertex, normal));
+	bindAttrib("tangent", Vertex::GetTangentSize() / sizeof(float), offsetof(Vertex, tangent));
 
 	// IBO 생성 및 데이터 업로드
 	glGenBuffers(1, &indexBuffer);

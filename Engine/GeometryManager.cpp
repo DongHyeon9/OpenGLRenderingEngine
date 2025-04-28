@@ -17,8 +17,8 @@ MeshData GeometryManager::CreatePlane(float Width, float Height, uint32 RowSlice
 	uint32 colCount = ColumnSlice + 1;
 
 	//실질적으로 사용할 Width와 Height는 GLOBAL::UNIT을 나눈 값
-	float unitWidth = Width / GLOBAL::UNIT;
-	float unitHeight = Height / GLOBAL::UNIT;
+	float unitWidth = Width * GLOBAL::UNIT;
+	float unitHeight = Height * GLOBAL::UNIT;
 
 	//RowSlice와 ColumnSlice에 따른 단위 길이 계산
 	float rowInterval = unitWidth / rowCount;	// 행 간의 간격
@@ -81,9 +81,9 @@ MeshData GeometryManager::CreateBox(const Vector3& BoxExtent) const
 	std::vector<Vertex>& vertices = result.vertices;
 	std::vector<uint32>& indices = result.indices;
 
-	const float xUnit = BoxExtent.x / GLOBAL::UNIT * 0.5f;
-	const float yUnit = BoxExtent.y / GLOBAL::UNIT * 0.5f;
-	const float zUnit = BoxExtent.z / GLOBAL::UNIT * 0.5f;
+	const float xUnit = BoxExtent.x * GLOBAL::UNIT * 0.5f;
+	const float yUnit = BoxExtent.y * GLOBAL::UNIT * 0.5f;
+	const float zUnit = BoxExtent.z * GLOBAL::UNIT * 0.5f;
 
 	std::vector<Vector4> positions{};
 	std::vector<Vector4> normals{};
@@ -207,8 +207,8 @@ MeshData GeometryManager::CreateCapsule(float Radius, float Height, uint32 NumSl
 	MeshData result{};
 
 	// 입력값의 단위화
-	const float unitRadius = Radius / GLOBAL::UNIT;
-	const float unitHeight = Height / GLOBAL::UNIT;
+	const float unitRadius = Radius * GLOBAL::UNIT;
+	const float unitHeight = Height * GLOBAL::UNIT;
 	const float halfHeight = unitHeight * 0.5f;
 
 	//최솟값 설정
@@ -309,9 +309,9 @@ MeshData GeometryManager::CreateCylinder(float BottomRadius, float TopRadius, fl
 
 	//길이 단위화, 각도 계산
 	const float unitAngle = -glm::tau<float>() / NumSlices;
-	const float unitBottomRadius = BottomRadius / GLOBAL::UNIT;
-	const float unitTopRadius = TopRadius / GLOBAL::UNIT;
-	const float unitHeight = Height / GLOBAL::UNIT;
+	const float unitBottomRadius = BottomRadius * GLOBAL::UNIT;
+	const float unitTopRadius = TopRadius * GLOBAL::UNIT;
+	const float unitHeight = Height * GLOBAL::UNIT;
 	const float halfHeight = unitHeight * 0.5f;
 
 	std::vector<Vertex>& vertices = result.vertices;
@@ -361,7 +361,7 @@ MeshData GeometryManager::CreateSphere(float Radius, uint32 NumSlices, uint32 Nu
 	MeshData result{};
 
 	// 입력값의 단위화
-	const float unitRadius = Radius / GLOBAL::UNIT;
+	const float unitRadius = Radius * GLOBAL::UNIT;
 
 	NumSlices += 3;
 	NumStacks += 2;

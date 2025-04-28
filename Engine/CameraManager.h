@@ -9,7 +9,7 @@ public:
 protected:
 
 private:
-	glm::vec3 position{ -3,0,0 };
+	glm::vec3 position{ -0.2f,0,0 };
 	glm::vec3 rotation{};
 	bool bPerspective{ true };
 
@@ -18,7 +18,7 @@ private:
 	glm::vec3 up{ 0, 1.0f, 0 };
 
 	float fov{ 70.0f };
-	float nearZ{ 0.1f };
+	float nearZ{ 0.025f };
 	float farZ{ 100.0f };
 
 	float cameraRotationSpeed{ 100.0f };

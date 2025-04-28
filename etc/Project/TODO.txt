@@ -1,5 +1,4 @@
-강의 3,4,5
-튜토리얼 7,8,9
+GeometryManager Cylinder Capsule로직 수정
 
-프리미티브 glm::vec활용해서 만들기
-인덱스 버퍼 사용해서 만들기
+강의 5
+튜토리얼 7,8,9
