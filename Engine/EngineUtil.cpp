@@ -10,7 +10,7 @@ GLuint EngineUtil::Shader::LoadVertexShader(const std::string& ShaderName)
 	//쉐이더 파일의 경로를 가져와 파일 오픈, 이후 파일 내부의 code를 저장
 	std::string shaderPath{ EngineUtil::Path::GetVertexShaderDir() + ShaderName + SHADER_EXTENSION::VERTEX.data() };
 	std::string shaderCode{};
-	std::ifstream shaderStream{ shaderPath, std::ios::in};
+	std::ifstream shaderStream{ shaderPath, std::ios::in };
 	if (shaderStream.is_open())
 	{
 		std::stringstream sstr{};
@@ -263,15 +263,25 @@ std::string EngineUtil::Path::GetMeshDir()
 
 bool EngineUtil::OpenGL::CheckProgram(GLuint ProgramID)
 {
-	GLint result{ GL_FALSE };
-	int infoLogLength{};
-	glGetProgramiv(ProgramID, GL_LINK_STATUS, &result);
-	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
-	if (infoLogLength > 0) {
-		std::vector<char> ProgramErrorMessage(infoLogLength + 1);
-		glGetProgramInfoLog(ProgramID, infoLogLength, NULL, &ProgramErrorMessage[0]);
-		LOG("Program Error : %s\n", &ProgramErrorMessage[0]);
+	GLint linkStatus = GL_FALSE;
+	glGetProgramiv(ProgramID, GL_LINK_STATUS, &linkStatus);
+
+	if (linkStatus == GL_FALSE) {
+		GLint infoLogLength = 0;
+		glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		if (infoLogLength > 0) {
+			std::vector<char> programErrorMessage(infoLogLength);
+			glGetProgramInfoLog(ProgramID, infoLogLength, nullptr, programErrorMessage.data());
+			LOG("Program Link Error: %s\n", programErrorMessage.data());
+		}
+		else {
+			LOG("Program Link Error: No additional information available.\n");
+		}
+
+		glDeleteProgram(ProgramID); // 리소스 정리
 		return false;
 	}
+
 	return true;
 }

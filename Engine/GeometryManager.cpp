@@ -267,7 +267,7 @@ MeshData GeometryManager::CreateCapsule(float Radius, float Height, uint32 NumSl
 		//나머지 버텍스는 위로
 		else
 		{
-			vertices[i].position = vertices[i].position * glm::translate(glm::mat4(1.0f), Vector3(0.0f, halfHeight, 0.0f));
+			vertices[i].position = glm::translate(glm::mat4(1.0f), Vector3(0.0f, halfHeight, 0.0f)) * vertices[i].position;
 			vertices[i].texcoord.y = radiusRatio - texcoordUnit * ((i - halfIndex - NumSlices - 1) / (NumSlices + 1));
 		}
 	}
@@ -277,7 +277,7 @@ MeshData GeometryManager::CreateCapsule(float Radius, float Height, uint32 NumSl
 	for (size_t i = 0; i < halfIndex; ++i)
 	{
 		//하단 반구 이동
-		vertices[i].position = vertices[i].position * glm::translate(glm::mat4(1.0f), Vector3(0.0f, -halfHeight, 0.0f));
+		vertices[i].position = glm::translate(glm::mat4(1.0f), Vector3(0.0f, -halfHeight, 0.0f)) * vertices[i].position;
 		vertices[i].texcoord.y = 1.0f - texcoordUnit * (i / (NumSlices + 1));
 	}
 	LOG("하단 반구 이동, 텍스처 좌표 조정");
@@ -328,6 +328,7 @@ MeshData GeometryManager::CreateCylinder(float BottomRadius, float TopRadius, fl
 
 		vertices.emplace_back(v);
 	}
+	const uint32 topStart{ static_cast<uint32>(vertices.size()) };
 
 	//상단 버텍스 생성
 	for (uint32 i = 0; i <= NumSlices; i++) {
@@ -341,16 +342,56 @@ MeshData GeometryManager::CreateCylinder(float BottomRadius, float TopRadius, fl
 
 		vertices.emplace_back(v);
 	}
+	const uint32 bottomCenterIdx{ static_cast<uint32>(vertices.size()) };
 
-	//인덱스 연결
+	//하단 중심 버텍스 생성
+	{
+		Vertex v{};
+		v.position = Vector4(0.0f, -halfHeight, 0.0f, 1.0f);
+		v.normal = GLOBAL::DOWN;
+		v.texcoord = Vector2(0.0f, 0.0f);
+		v.tangent = GLOBAL::RIGHT;
+
+		vertices.emplace_back(v);
+	}
+	const uint32 topCenterIdx{ static_cast<uint32>(vertices.size()) };
+
+	//상단 중심 버텍스 생성
+	{
+		Vertex v{};
+		v.position = Vector4(0.0f, halfHeight, 0.0f, 1.0f);
+		v.normal = GLOBAL::UP;
+		v.texcoord = Vector2(0.0f, 1.0f);
+		v.tangent = GLOBAL::LEFT;
+
+		vertices.emplace_back(v);
+	}
+
+	//측면 인덱스 연결
 	for (uint32 i = 0; i < NumSlices; i++) {
+		//측면 삼각형 연결
 		indices.emplace_back(i);
-		indices.emplace_back(i + NumSlices + 1);
-		indices.emplace_back(i + 1 + NumSlices + 1);
-
-		indices.emplace_back(i);
-		indices.emplace_back(i + 1 + NumSlices + 1);
+		indices.emplace_back(i + 1 + topStart);
 		indices.emplace_back(i + 1);
+
+		//측면 역삼각형 연결
+		indices.emplace_back(i);
+		indices.emplace_back(i + topStart);
+		indices.emplace_back(i + 1 + topStart);
+	}
+
+	//하단 인덱스 연결
+	for (uint32 i = 0; i < NumSlices; ++i) {
+		indices.emplace_back(bottomCenterIdx);
+		indices.emplace_back(i);
+		indices.emplace_back(i + 1);
+	}
+
+	//상단 인덱스 연결
+	for (uint32 i = 0; i < NumSlices; ++i) {
+		indices.emplace_back(topCenterIdx);
+		indices.emplace_back(topStart + i + 1);
+		indices.emplace_back(topStart + i);
 	}
 
 	return result;

@@ -215,9 +215,7 @@ void Engine::ShutDown()
 bool Engine::CreateBox()
 {
 	//mesh = GeometryManager::GetInstance()->CreateBox(Vector3(1000.0f));
-	//TODO : 상단반구와 하단반구 움직이지 않음
 	//mesh = GeometryManager::GetInstance()->CreateCapsule(1000.0f, 3000.0f, 20, 20);
-	//TODO : 위 아래 뚜껑 없음
 	mesh = GeometryManager::GetInstance()->CreateCylinder(1000.0f, 1500.0f, 3000.0f, 8);
 	//mesh = GeometryManager::GetInstance()->CreateSphere(1000.0f, 20, 20);
 
